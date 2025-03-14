@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>314</title>
+    <style>
+        * { padding: 0; margin: 0; }
+
+        p,
+        img {
+            pointer-events: none;
+            user-select: none;
+        }
+
+        
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            /* background-color: #171717; */
+        }
+
+        .emptybox {
+            width: 100%;
+            height: 100vh;
+            /* background-color: #ffffff5b; */
+           
+        }
+        /* 界面1 -----------------------------------*/
+
+        .emptybox:nth-child(1) {
+            background: linear-gradient(
+                45deg,
+                #ff0090 0%,
+                #1a1a4a 50%,
+                #d900ff 100%
+            );
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Canvas星空效果 */
+        #star-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        /* 文字层级 */
+        .a, .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+                 /* 新增文字气泡样式 */
+        .bubble {
+            user-select: none;
+            pointer-events: none;
+            position: absolute;
+            font-family: 'ZCOOL QingKe HuangYou', cursive;
+            font-size: 1.2rem;
+            opacity: 0;
+            animation: float-up 3s ease-out forwards;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+            text-align: center;
+            z-index: 999'
+
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(0) scale(0.98) rotateZ(0deg);
+                opacity: 0;
+                filter: blur(3px) brightness(1.2);
+            }
+            20% {
+                transform: translateY(-30px) scale(1.05) rotateZ(1.5deg);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translateY(-70px) scale(1.1) rotateZ(-0.5deg);
+                opacity: 1;
+                filter: blur(0) brightness(1);
+            }
+            80% {
+                transform: translateY(-110px) scale(0.92) rotateZ(0.8deg);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-150px) scale(0.85) rotateZ(0deg);
+                opacity: 0;
+                filter: blur(4px) brightness(0.8);
+            }
+        }
+        /* 悬停发光文字 */ 
+        .a {
+            position: relative;
+            top: -200px;
+            font: 900 100px '';
+            cursor: pointer;
+            letter-spacing: 16px;
+            /* 添加毛玻璃背景 */
+            &::before {
+                content: '';
+                position: absolute;
+                width: 120%;
+                height: 150%;
+                left: -10%;
+                top: -25%;
+                background: linear-gradient(
+                    45deg,
+                    rgba(130, 67, 255, 0.2) 0%,
+                    rgba(255, 105, 180, 0.15) 100%
+                );
+                backdrop-filter: blur(12px);
+                border-radius: 20px;
+                z-index: -1;
+                opacity: 0;
+                transition: all 0.6s ease;
+            }
+            &:hover::before {
+                opacity: 1;
+            }
+        }
+
+        .a span {
+            color: #49199d;
+            transition: all 1.5s cubic-bezier(0.25, 0.75, 0.5, 1.5);
+            transition-delay: calc(var(--i)*.1s);
+            position: relative;
+            /* 添加文字毛玻璃边缘 */
+            &::after {
+                content: attr(data-char);
+                position: absolute;
+                top: 0;
+                left: 0;
+                color: white;
+                text-shadow: 
+                    0 0 15px rgba(255,255,255,0.4),
+                    0 0 30px rgba(255,105,180,0.3);
+                filter: blur(3px);
+                opacity: 0;
+                transition: 0.4s ease;
+            }
+        }
+
+        .a:hover span {
+            color: #ffffff;
+            text-shadow: 
+                0 0 10px #fff,
+                0 0 20px #ff69b4,
+                0 0 30px #fff,
+                0 0 50px #b147e3,
+                0 0 80px #fff;
+            /* 激活毛玻璃边缘 */
+            &::after {
+                opacity: 0.6;
+                transform: translateY(4px) scale(1.05);
+            }
+        }
+                /*故障文字  */
+        .container {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40%;
+            height: 20%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            /* background-color: #ffffff; */
+        }
+        .faulttext {
+            position: absolute;
+            font-family: Impact, sans-serif;
+            font-size: 5rem;
+            color: #ffffff;
+            letter-spacing: 0.5rem;
+            user-select: none;
+        }
+
+        .faulttext_fault::after,
+        .faulttext_fault::before {
+            content: "CONTEXT";
+            position: absolute;
+            left: 0;
+            top: 0;
+            mix-blend-mode: screen;
+        }
+
+        .faulttext_fault::after {
+            color: #ff0000;
+            transform: translateX(2%);
+        }
+
+        .faulttext_fault::before {
+            color: #0000ff;
+            transform: translateX(-2%);
+        }
+        div {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                user-select: none;
+                
+            }
+            /*界面1 over-----------------------------------  */
+
+
+
+
+        /* 界面2 */
+        /* 修改后的界面2样式 */
+        .emptybox:nth-child(2) {
+            position: relative; /* 关键定位 */
+            background-color: rgba(232, 221, 221, 0.637);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* 隐藏溢出部分 */
+            height: 100vh; /* 确保容器高度 */
+        }
+
+        /* 背景图片样式 */
+        .emptybox:nth-child(2) > img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 保持比例填充 */
+            z-index: 0; /* 置于底层 */
+            /* opacity: 0.8;  */
+            /* 调整透明度 */
+            /* filter: blur(2px); */
+        }
+
+        /* 确保内容在图片上层 */
+        .emptybox:nth-child(2) .a2 {
+            position: relative;
+            z-index: 1; /* 高于背景图的层级 */
+        }
+
+       
+
+        .a2 {
+            position: relative;
+            width: 750px;
+            margin-left: 22cm;
+            display: flex;
+            justify-content: space-evenly;
+            /* background-color: #ff0000; */
+        }
+        
+
+        .b2 {
+            width: 400px;
+            height: 500px;
+            transition: .4s;
+            background-size: cover;
+            /* background-color: #d900ff; */
+        }
+
+        .c2 {
+            width: 200px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            /* background-color: #ff0000; */
+        }
+
+        .d2 {
+            position: relative;
+            width: 200px;
+            height: 90px;
+            right: 0;
+            transition: .5s;
+            overflow: hidden;
+            /* background-color: #ff0000; */
+        }
+
+        .d2 img {
+            position: absolute;
+            width: 200px;
+            top: 0;
+            transform: translate(0, -50px);
+            transition: .5s;
+            right: 0;
+        }
+
+        .d2.dd2 {
+            opacity: 0;
+            right: 250px;
+            /* background-color: #ff0000; */
+        }
+
+        .d2:hover img {
+            opacity: 0;
+            right: 250px;
+        }    
+/* 界面2--------------------------------------------------------------------- */
+
+/* 界面3 */
+        .emptybox:nth-child(3) {
+            display: flex;
+            position: relative;
+            justify-content: center;
+            align-items: center;
+            height: 300vh;
+            background-image: linear-gradient(to right, #6f0e99 0%, #9a023f 50%,#3a0042 100%);
+        }
+
+        .shelll {
+            position: relative;
+            min-width: 1000px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .shelll .boxl {
+            position: relative;
+            width: 250px;
+            height: 350px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            margin: 30px;
+            border-radius: 5px;
+            border: #fff 5px solid;
+        }
+
+        .shelll .boxl .images img {
+            width: 100%;
+        }
+
+        /* 保留的悬停放大效果 */
+        .shelll .boxl:hover {
+            transform: scale(1.25);
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.7);
+            z-index: 1;
+        }
+
+        /* 移除其他元素的3D旋转效果 */
+        .shelll .boxl .contentl {
+            position: absolute;
+            top: 0;
+            width: 90%;
+            height: 100%;
+            z-index: 999;
+            padding: 15px;
+        }
+
+        .shelll .boxl .contentl h2 {
+            color: rgb(210, 140, 140);
+            font-size: 20px;
+        }
+
+        .shelll .boxl .contentl p {
+            color: #000;
+            font-size: 14px;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+     
+
+        /* 界面4 */
+        /*  引入字体 */
+        @font-face {
+            font-family: 'banana';
+            src: url(./font/MedulaOne-Regular.ttf);
+        }
+
+        @font-face {
+            font-family: 'Simonetta';
+            src: url(./font/Simonetta-Black.ttf);
+        }
+        .emptybox:nth-child(4) {
+            background-color: #f313bb;
+            display: flex;
+            position: relative;
+            justify-content: center;
+            align-items: center;
+            height: 140vh;
+        }
+        .shell {
+            position: relative;
+            width: 1433px;
+            height: 780px;
+            background: #b433f0;
+            box-shadow: 0px 4px 116px 30px rgba(0, 0, 0, 0.25);
+            border-radius: 30px;
+            color: #000;
+            transition: .2s;
+        }
+
+        .title h2 {
+            position: absolute;
+            width: 560px;
+            height: 42px;
+            font: 300 32px 'Simonetta';
+            line-height: 40px;
+            text-align: center;
+            letter-spacing: 0.15em;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            line-height: 30px;
+            transition: .3s;
+            /* background-color: #b147e3; */
+        }
+
+        .slide {
+            position: relative;
+            left:-450px;
+            top: 200px;
+            width: 30px;
+            transform: translateY(-50%);
+            height: 60%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-direction: column;
+            /* background-color: #b147e3; */
+        }
+
+        .iconfont {
+            font-size: 37px;
+            position: relative;
+        }
+
+        .box {
+            content: '';
+            width: 4px;
+            height: 100px;
+            background: #000;
+            position: absolute;
+            display: block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .icon-arrow-up .box {
+            top: 4px;
+        }
+
+        .icon-arrow-down .box {
+            bottom: 4px;
+        }
+
+        .bottons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-direction: column;
+            width: 100%;
+            height: 70px;
+            /* background-color: #b147e3; */
+        }
+
+        .botton {
+            width: 18px;
+            height: 18px;
+            background: #000000;
+            border-radius: 50%;
+            transition: .3s;
+            position: relative;
+        }
+
+        .one {
+            width: 11px;
+            height: 11px;
+            background: #f52bb5;
+            border: 7px solid #000000;
+            
+        }
+
+        .two span {
+            color: #fff;
+            opacity: 0;
+        }
+
+        .line {
+            width: 40px;
+            height: 3px;
+            background: #000;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 25px;
+            border-radius: 10px;
+            
+        }
+
+        .two .line {
+            background: #fff;
+            opacity: 0;
+        }
+
+        .botton span {
+            position: absolute;
+            font-size: 26px;
+            top: 50%;
+            transform: translateY(-55%);
+            left: 70px;
+        }
+
+        .main {
+            position: relative;
+            top: 250px;
+            left: 15%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            /* background-color: #b147e3; */
+        }
+
+        .main h2 {
+            position: absolute;
+            font: 400 220px 'banana';
+            letter-spacing: 0.065em;
+            z-index: 100;
+            color: #b433f0;
+            left: -40px;
+            top: 150px;
+            display: block;
+            text-shadow: 0 5px 10px #2828286e, 0 -2px 1px #ffffff;
+            transition: .5s;
+        }
+
+        .circle {
+            box-sizing: border-box;
+            position: absolute;
+            width: 510px;
+            height: 510px;
+            border-radius: 50%;
+            border: 19px solid #060606;
+            box-shadow: 0px 0px 30px 16px rgba(0, 0, 0, 0.25) inset,
+                0px 0px 30px 20px rgba(0, 0, 0, 0.25);
+            transition: .3s;
+        }
+
+        .banana {
+            position: absolute;
+            width: 780px;
+            height: 390px;
+            left: -120px;
+            top: 110px;
+            background: url(./banana.png);
+            background-size: contain;
+            background-repeat: no-repeat;
+            transition: .5s;
+        }
+
+        nav {
+            width: 360px;
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            top: 0;
+            transform: rotate(-90deg);
+            right: -130px;
+            font-size: 24px;
+            top: 370px;
+            font-family: 'Simonetta';
+            letter-spacing: 2px;
+        }
+
+        nav a {
+            color: #000;
+        }
+
+        .ss {
+            border-bottom: 5px solid rgb(0, 0, 0);
+            padding-bottom: 8px;
+        }
+
+        .content {
+            position: absolute;
+            width: 440px;
+            height: 130px;
+            top: 260px;
+            right: 150px;
+            opacity: 0;
+            transition: .5s;
+        }
+
+        .content h3 {
+            font: 400 62px 'Simonetta';
+            margin-bottom: 35px;
+        }
+
+        .content span {
+            font: 400 24px 'Simonetta';
+        }
+
+        button {
+            position: absolute;
+            width: 124px;
+            height: 46px;
+            right: 0;
+            top: 300px;
+            border-radius: 12px;
+            background: #b433f0;
+            border-radius: 12px;
+            border: none;
+            font-size: 26px;
+            letter-spacing: 3px;
+        }
+        /* .scrollbox {
+            justify-content: start;
+            align-items: start;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .scrollbox_container {
+            justify-content: start;
+            height: 100vh;
+            flex-shrink: 0;
+            background-color: aqua;
+        }
+
+        .scrollbox_container_card {
+            position: relative;
+            width: 65rem;
+            height: 40rem;
+            background-color: #ff0000;
+            border-radius: 5rem;
+            margin-left: 5rem;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .scrollbox_container_card p {
+            font-family: sans-serif;
+            font-size: 6rem;
+            color: #ff00c3;
+            font-weight: 900;
+            text-transform: uppercase;
+            z-index: 1;
+        }     */
+
+    </style>
+    <link rel="stylesheet" href="./download_4/font_jvcvbwruwxp/iconfont.css">
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- 界面1 -->
+    <div class="emptybox" id="poetry-container"> 
+        <div class="a" style="font-family: 'ZCOOL QingKe HuangYou', sans-serif;font-size: 50px;">
+            <span style="--i:1">W</span>
+            <span style="--i:2">W</span>
+            <span style="--i:3">R</span>
+            <span style="--i:4">♡</span>
+            <span style="--i:5">L</span>
+            <span style="--i:6">J</span>
+            <span style="--i:7">Z</span>
+        </div>
+        
+        <div class="container" onclick="faulttext.fault()">
+            <p class="faulttext">3.14 ​White Day</p>
+            <p class="faulttext">3.14 ​White Day</p>
+            <p class="faulttext">3.14 ​White Day</p>
+            <p class="faulttext">3.14 ​White Day</p>
+        </div>
+        
+    </div>
+    <!-- 界面1 -------------------------------->
+        
+
+    <!-- 界面2 -->
+    <div class="emptybox" >
+        <img src="2back.jpg" alt="">
+        <div class="a2">
+       
+        <div class="b2"></div>
+        <div class="c2">
+            <div class="d2 dd2"><img src="1.jpg" alt=""></div>
+            <div class="d2"><img src="2.jpg" alt=""></div>
+            <div class="d2"><img src="3.jpg" alt=""></div>
+            <div class="d2"><img src="4.jpg" alt=""></div>
+            <div class="d2"><img src="5.jpg" alt=""></div>
+        </div>
+    </div></div>
+
+
+
+
+    <!-- 界面3 -->
+    <div class="emptybox"> 
+        <div class="shelll">
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/0.png" alt="">
+                </div>
+
+            </div>
+    
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/1.png" alt="">
+                </div>
+
+            </div>
+    
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/2.png" alt="">
+                </div>
+
+            </div>
+    
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/3.png" alt="">
+                </div>
+
+            </div>
+    
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/4.png" alt="">
+                </div>
+
+            </div>
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/5.png" alt="">
+                </div>
+
+            </div>
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/6.png" alt="">
+                </div>
+
+            </div>
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/7.png" alt="">
+                </div>
+
+            </div>
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/8.png" alt="">
+                </div>
+
+            </div>
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/9.png" alt="">
+                </div>
+
+            </div>
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/10.png" alt="">
+                </div>
+
+            </div>
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/11.png" alt="">
+                </div>
+
+            </div> 
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/12.png" alt="">
+                </div>
+
+            </div>
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/13.png" alt="">
+                </div>
+
+            </div>
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/14.png" alt="">
+                </div>
+
+            </div>
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/15.png" alt="">
+                </div>
+
+            </div>
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/16.png" alt="">
+                </div>
+
+            </div>
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/17.png" alt="">
+                </div>
+
+            </div>
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/18.png" alt="">
+                </div>
+
+            </div>
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/19.png" alt="">
+                </div>
+
+            </div> 
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/20.png" alt="">
+                </div>
+
+            </div>
+            <div class="boxl">
+                <div class="images">
+                    <img src="./tt/21.png" alt="">
+                </div>
+                <!-- <div class="content">
+                    <h2>ZeenChin</h2>
+                    <p>The style in the painting integrates temptation, fantasy and strangeness
+                    </p>
+                </div> -->
+            </div>               
+
+        </div>    
+    </div>
+
+    <!-- <div class="scrollbox">
+        <div class="scrollbox_container">
+            <div class="scrollbox_container_card">
+                <p>card one</p>
+            </div>
+            <div class="scrollbox_container_card">
+                <p>card two</p>
+            </div>
+            <div class="scrollbox_container_card">
+                <p>card three</p>
+            </div>
+        </div>
+    </div> -->
+    
+    <div class="emptybox">
+        <div class="shell">
+            <div class="title">
+                <h2>MAKE A PROMISE</h2>
+            </div>
+            <div class="slide">
+                <div class="top"><i class="iconfont icon-arrow-up">
+                        <div class="box"></div>
+                    </i></div>
+                <div class="bottons">
+                    <div class="botton one">
+                        <div class="line"></div>
+                        <span>1</span>
+                    </div>
+                    <div class="botton two">
+                        <div class="line"></div>
+                        <span>2</span>
+                    </div>
+                </div>
+                <div class="top"><i class="iconfont icon-arrow-down">
+                        <div class="box"></div>
+                    </i></div>
+            </div>
+            <div class="main">
+                <h2>1022</h2>
+                <div class="circle"></div>
+                <div class="banana"></div>
+            </div>
+            <nav>
+                <a href="">YOU</a>
+                <a href="">LIKE</a>
+                <a href="">ALWAYS</a>
+                <a href="" class="ss">I</a>
+            </nav>
+            <div class="content">
+                <h3>1022</h3>
+                <span>
+                    <br><br><br>
+                    Ama il tuo <br> passato,presente e futuro<br><br>
+                    Non hai baciato le mie labbra, 
+                    ma la mia anima.<br><br>
+                    La mia opinione è sbagliata
+                </span>
+                <button>! ! !</button>
+            </div>
+        </div>        
+    </div>
+</body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<script>
+    // 界面1新增Canvas星空动画
+    // 纯星空动画
+    class StarrySky {
+        constructor() {
+            this.canvas = document.createElement('canvas');
+            this.ctx = this.canvas.getContext('2d');
+            this.canvas.id = 'star-canvas';
+            document.querySelector('.emptybox:nth-child(1)').appendChild(this.canvas);
+            
+            this.stars = [];
+            this.maxStars = 200;
+            this.resize();
+            this.init();
+            
+            window.addEventListener('resize', () => this.resize());
+            requestAnimationFrame(() => this.animate());
+        }
+
+        resize() {
+            this.width = window.innerWidth;
+            this.height = window.innerHeight;
+            this.canvas.width = this.width;
+            this.canvas.height = this.height;
+        }
+
+        init() {
+            // 创建星星
+            for(let i = 0; i < this.maxStars; i++) {
+                this.stars.push({
+                    x: Math.random() * this.width,
+                    y: Math.random() * this.height,
+                    size: Math.random() * 2,
+                    speed: Math.random() * 0.5 + 0.2,
+                    alpha: Math.random()
+                });
+            }
+        }
+
+        draw() {
+            this.ctx.fillStyle = 'rgba(8, 5, 32, 0.8)';
+            this.ctx.fillRect(0, 0, this.width, this.height);
+            
+            // 绘制星星
+            this.stars.forEach(star => {
+                this.ctx.fillStyle = `hsla(${Math.random()*60 + 200}, 70%, 80%, ${star.alpha})`;
+                this.ctx.beginPath();
+                this.ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                this.ctx.fill();
+                
+                // 星星移动
+                star.x += star.speed;
+                star.y += star.speed * 0.3;
+                
+                // 边界检测
+                if(star.x > this.width) star.x = 0;
+                if(star.y > this.height) star.y = 0;
+                
+                // 闪烁效果
+                star.alpha = 0.5 + Math.sin(Date.now()/1000 * star.speed) * 0.5;
+            });
+        }
+
+        animate() {
+            this.ctx.clearRect(0, 0, this.width, this.height);
+            this.draw();
+            requestAnimationFrame(() => this.animate());
+        }
+    }
+    class StarrySky1 {
+        constructor() {
+            this.canvas = document.createElement('canvas');
+            this.ctx = this.canvas.getContext('2d');
+            this.canvas.id = 'star-canvas';
+            document.querySelector('.emptybox:nth-child(2)').appendChild(this.canvas);
+            
+            this.stars = [];
+            this.maxStars = 200;
+            this.resize();
+            this.init();
+            
+            window.addEventListener('resize', () => this.resize());
+            requestAnimationFrame(() => this.animate());
+        }
+
+        resize() {
+            this.width = window.innerWidth;
+            this.height = window.innerHeight;
+            this.canvas.width = this.width;
+            this.canvas.height = this.height;
+        }
+
+        init() {
+            // 创建星星
+            for(let i = 0; i < this.maxStars; i++) {
+                this.stars.push({
+                    x: Math.random() * this.width,
+                    y: Math.random() * this.height,
+                    size: Math.random() * 2,
+                    speed: Math.random() * 0.5 + 0.2,
+                    alpha: Math.random()
+                });
+            }
+        }
+
+        draw() {
+            this.ctx.fillStyle = 'rgba(8, 5, 32, 0.8)';
+            this.ctx.fillRect(0, 0, this.width, this.height);
+            
+            // 绘制星星
+            this.stars.forEach(star => {
+                this.ctx.fillStyle = `hsla(${Math.random()*60 + 200}, 70%, 80%, ${star.alpha})`;
+                this.ctx.beginPath();
+                this.ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                this.ctx.fill();
+                
+                // 星星移动
+                star.x += star.speed;
+                star.y += star.speed * 0.3;
+                
+                // 边界检测
+                if(star.x > this.width) star.x = 0;
+                if(star.y > this.height) star.y = 0;
+                
+                // 闪烁效果
+                star.alpha = 0.5 + Math.sin(Date.now()/1000 * star.speed) * 0.5;
+            });
+        }
+
+        animate() {
+            this.ctx.clearRect(0, 0, this.width, this.height);
+            this.draw();
+            requestAnimationFrame(() => this.animate());
+        }
+    }
+    // 新增文字气泡逻辑
+    const poetry = {
+        arr: ["多依赖我一点点", 
+              "不用那么坚强", 
+              "我的世界全是你的颜色", 
+              "黑暗中会绽开光晕","不要离开我",
+              "你的存在对我来说就是最好的礼物","没有不可治愈的伤痛，没有不能结束的沉沦","a555","1022♡0314","交换心脏吧,dear","♇♇♇♇♇♇♇♇♇",
+              "I want you to stay Till I'm in the grave","I'll love you till the day that I die","I love you, don't act so surprised","I NEED YOU","FOREVER",
+              "I WANNA YOUR LOVE","别再吝啬表达","好想只要站在那里就有人爱我","TI AMO",
+            ],
+        colors: ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEE93", "#FFB6C1", "#E6E6FA", "#98FB98", "#FFD700", "#87CEEB", "#FF69B4", "#DDA0DD", "#F0E68C", "#7FFFD4", "#FFA07A", "#FFC0CB", "#A2DED0", "#FFDAB9", "#C6E2FF","#FF7F50", "#FF6347", "#FF4500", "#FF8C00", "#FFA500", "#FFD700", "#FF69B4", "#FF1493", "#FF00FF", "#FF00FF", "#FF00FF"],
+        init() {
+            const container = document.getElementById('poetry-container');
+            container.addEventListener('click', (e) => {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                
+                // 定位计算优化
+                const rect = container.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                bubble.style.left = `${x}px`;
+                bubble.style.top = `${y}px`;
+                bubble.style.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+                bubble.style.fontSize = `${18 + Math.random() * 8}px`;
+                bubble.style.transform = `rotate(${(Math.random() - 0.5) * 8}deg)`;
+                bubble.textContent = this.arr[Math.floor(Math.random() * this.arr.length)];
+                
+                bubble.addEventListener('animationend', () => bubble.remove());
+                container.appendChild(bubble);
+            });
+        }
+    };
+    // 故障文字
+    const faulttext = {
+        player: {},
+        texts: [],
+        init() {
+            this.texts = [...document.getElementsByClassName('faulttext')];
+        },
+        fault() {
+            clearInterval(this.player);
+            setTimeout(() => {
+                clearInterval(this.player);
+                this.texts.forEach((text) => {
+                    text.classList.remove("faulttext_fault");
+                    text.style.transform = '';
+                    text.style.clipPath = '';
+                });
+            }, 1000)
+            this.player = setInterval(() => {
+                this.texts.forEach((text) => {
+                    text.classList.add("faulttext_fault");
+                    text.style.transform = `translate(${Math.random() * 60 - 30}%,${Math.random() * 60 - 30}%)`;
+                    let x = Math.random() * 100;
+                    let y = Math.random() * 100;
+                    let h = Math.random() * 50 + 50;
+                    let w = Math.random() * 40 + 10;
+                    text.style.clipPath = `polygon(${x}% ${y}%, ${x + w}% ${y}%, ${x + w}% ${y + h}%, ${x}% ${y + h}%)`
+                })
+            }, 30);
+        }
+    };
+    faulttext.init()
+    const scrollbox = {
+        // 获取滚动容器元素
+        container: document.querySelector(".scrollbox_container"),
+        // 获取所有卡片元素
+        cards: [...document.querySelectorAll(".scrollbox_container_card")],
+        // 触发移动的垂直距离
+        trigger_distance: 0,
+        // 边界距离，用于停止移动
+        border_distance: 0,
+        // 当前的垂直滚动距离
+        distance: 0,
+        // 调整容器大小的方法
+        resize() {
+            let _scrollbox = document.querySelector(".scrollbox");
+            _scrollbox.style.height = `${this.container.offsetWidth}px`;
+            this.trigger_distance = _scrollbox.offsetTop;
+            this.border_distance = _scrollbox.offsetTop + _scrollbox.offsetHeight - innerHeight;
+        },
+        // 根据滚动位置移动元素的方法
+        move() {
+            // 当垂直滚动距离在触发距离和边界距离之间时执行移动逻辑
+            if (scrollY >= this.trigger_distance &&
+                scrollY <= this.border_distance) {
+                // 计算当前滚动距离与触发距离的差值
+                this.distance = scrollY - this.trigger_distance;
+                
+                this.container.style.transform = `translateY(${this.distance}px)`;
+                // 计算卡片的水平移动距离
+                let distance_x =
+                    this.distance / (this.border_distance - this.trigger_distance) *
+                    (this.container.offsetWidth - innerWidth);
+                // 遍历所有卡片并设置它们的水平位置
+                for (let i = 0; i < this.cards.length; i++) {
+                    this.cards[i].style.transform = `translateX(${-distance_x}px)`;
+                };
+            };
+        }
+       
+    };
+            
+    // 界面2---------------------------------------------------------
+    // 更新选择器
+            
+        let b = document.querySelector(".b2")
+        let d = document.getElementsByClassName("d2")
+
+        let time
+        let index = 0
+
+        let a = function () {
+            for (let i = 0; i < d.length; i++) {
+                d[i].className = "d2"
+            }
+        }
+
+        let aa = function () {
+            a()
+            d[index].className = "d2 dd2"
+        }
+
+        function ts() {
+            time = setInterval(function () {
+                aa()
+                index++
+                b.style.backgroundImage = "url('" + [index] + ".jpg')"
+                if (index == 5) {
+                    index = 0
+                }
+            }, 1500);
+        }
+
+        for (let i = 0; i < d.length; i++) {
+            d[i].onmousemove = function () {
+                b.style.backgroundImage = "url('" + [i + 1] + ".jpg')"
+                a()
+                clearInterval(time)
+                index = i + 1
+                ts()
+            }
+        }
+
+        
+    // 界面2over--------------------------------------
+    
+    // 界面4-------------------
+    document.onmousewheel = function () {
+        // 滚轮上滚的时候触发
+        if (event.wheelDelta > 0) {
+            $('.title h2').css({ "left": "50%", "width": "560px", "fontSize": "32px" })
+            $('.shell').css({
+                "background-color": "#b433f0",
+                "color": "#000",
+            })
+            $('.box').css({ "background": "#000" })
+            $('.one').css({
+                "width": "11px",
+                "height": "11px",
+                "background": "#b433f0",
+                "border": "7px solid #000000",
+            })
+            $('.two').css({
+                "width": "18px",
+                "height": "18px",
+                "background": "#000",
+            })
+            $('.one .line').css({ "opacity": "1" })
+            $('.two .line').css({ "opacity": "0" })
+            $('.two span').css({ "opacity": "0" })
+            $('.one span').css({ "opacity": "1" })
+            $('nav a').css({ "color": "#000" })
+            $('nav .ss').css({ "borderBottomColor": "#000" })
+            $('.circle').css({
+                "border": "19px solid #000",
+                "left": "-0",
+                "boxShadow": "0px 0px 30px 16px rgba(0, 0, 0, 0.25) inset,0px 0px 30px 20px rgba(0, 0, 0, 0.25)",
+            })
+            $('.banana').css({
+                "left": "10px",
+                "width": "600px",
+                "height": "390px",
+                "top": "80px",
+            })
+            $('.main h2').css({
+                "left": "10px",
+                "fontSize": "220px",
+                "letterSpacing": "0.065em",
+                "color": "#b433f0",
+            })
+            $('.main h2').text('. W WR')
+            $('.content').css({ "opacity": "0", "top": "260px" })
+
+        }
+        // 滚轮下滚的时候触发
+        if (event.wheelDelta < 0) {
+            $('.title h2').css({ "left": "90px", "width": "100px", "fontSize": "24px" })
+            $('.shell').css({
+                "background-color": "#000",
+                "color": "#FFF",
+            })
+            $('.box').css({ "background": "#FFF" })
+            $('.two').css({
+                "width": "11px",
+                "height": "11px",
+                "background": "#000",
+                "border": "7px solid #b433f0",
+            })
+            $('.one').css({
+                "width": "18px",
+                "height": "18px",
+                "background": "#b433f0",
+            })
+            $('.two .line').css({ "opacity": "1" })
+            $('.two span').css({ "opacity": "1" })
+            $('.one span').css({ "opacity": "0" })
+            $('nav a').css({ "color": "#fff" })
+            $('nav .ss').css({ "borderBottomColor": "#fff" })
+            $('.circle').css({
+                "border": "19px solid #fff",
+                "left": "-250px",
+                "boxShadow": "0px 0px 30px 20px rgba(255, 255, 255, 0.25) inset,0px 0px 40px 30px rgba(255, 255, 255, 0.25)",
+            })
+            $('.banana').css({
+                "left": "610px",
+                "width": "200px",
+                "height": "100px",
+                "top": "420px",
+            })
+            $('.main h2').css({
+                "left": "-300px",
+                "fontSize": "300px",
+                "letterSpacing": "40px",
+                "color": "#fff",
+                "background": "url(./banana1.png)",
+            })
+            $('.main h2').text('TI AMO')
+            $('.content').css({ "opacity": "1", "top": "160px" })
+            
+        }
+    }    
+    
+    
+    // 新增初始化逻辑
+    window.addEventListener('DOMContentLoaded', () => {
+        new StarrySky();
+        new StarrySky1();
+        poetry.init();
+        faulttext.init();
+        scrollbox.resize();
+        ts();
+    });
+    // 初始化调整容器大小
+    scrollbox.resize();
+    // 添加窗口大小改变事件监听器，以重新调整容器大小
+    window.addEventListener("resize", () => {
+        scrollbox.resize();
+    });
+    // 添加窗口滚动事件监听器，以根据滚动位置移动元素
+    window.addEventListener("scroll", () => {
+        scrollbox.move();
+    });
+</script>
+
+</html>
